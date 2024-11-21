@@ -1,0 +1,67 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django migrations
+**/migrations/
+
+# Logs
+*.log
+*.out
+*.err
+
+# Virtual environments
+env/
+venv/
+ENV/
+.venv/
+
+# macOS files
+.DS_Store
+
+# Windows files
+Thumbs.db
+
+# Database files
+*.sqlite3
+
+# Static files
+staticfiles/
+
+# Media files
+media/
+
+# Local environment settings
+.env
+*.local
+
+# IDE files
+.idea/
+.vscode/
+
+# Coverage reports
+.coverage
+htmlcov/
+*.cover
+*.py,cover
+
+# Test reports
+.junit/
+
+# Build files
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Pip and wheel
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Node.js dependencies (if any)
+node_modules/
+
+# Docker
+*.dockerignore
+docker-compose.override.yml
