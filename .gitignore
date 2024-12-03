@@ -1,0 +1,51 @@
+# General
+*.log
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+env/
+venv/
+*.env
+*.sqlite3
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.bak
+*.swp
+*.swo
+node_modules/
+*.iml
+*.out
+
+# Django
+db.sqlite3
+/media/
+staticfiles/
+*.pid
+*.migrations/
+celerybeat-schedule
+celerybeat.pid
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.log
+*.pot
+*.py[co]
+
+# Elasticsearch
+.elasticsearch/
+http_ca.crt
+
+# Next.js
+/node_modules/
+.next/
+*.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
+yarn.lock
+npm-debug.log*
+.env
