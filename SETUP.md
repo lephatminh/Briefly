@@ -28,6 +28,7 @@ $ pip install -m requirements.txt
 $ cd backend
 $ python manage.py makemigrations
 $ python manage.py migrate
+$ python manage.py search_index --rebuild
 ```
 
 3. Test to see if the elasticsearch is setup
@@ -40,8 +41,9 @@ $ python manage.py test
 $ python manage.py createsuperuser
 $ python manage.py runserver
 ```
-After the server is up, go to /admin to login and create some sample WikiArticles. The search API is located at /search
-
+After the server is up, go to /admin to login and create some sample WikiArticles.
 ![image](assets/adminpage.png)
 ![image](assets/searchdemo1.png)
+
+The search API is located at /search.
 ![image](assets/searchdemo2.png)
