@@ -1,6 +1,7 @@
 from django.test import TestCase
 from .models import WikiArticle
 from .documents import WikiDocument
+from .serializers import WikiDocumentSerializer
 
 class WikiArticleSearchTest(TestCase):
 
@@ -76,14 +77,10 @@ class WikiArticleSearchTest(TestCase):
         search = WikiDocument.search().query("match", title="Machine")
         query_set = search.to_queryset()
         
-        print(query_set)
-        
         self.assertEqual(query_set.count(), 1)
         self.assertEqual(query_set[0].title, "Machine Learning")
         self.assertIn("Machine", query_set[0].title)
         self.assertIn("artificial intelligence", query_set[0].content)
-
-
 
     def test_search_no_results(self):
         """Test search with no results."""
@@ -91,3 +88,21 @@ class WikiArticleSearchTest(TestCase):
         results = search.execute()
 
         self.assertEqual(len(results), 0)
+        
+    def test_serializer_data(self):
+        """Test the serializer for WikiDocument."""
+        # Search for the document in Elasticsearch
+        search = WikiDocument.search().query("match", title="Machine")
+        document = search.execute()[0]
+
+        # Serialize the document
+        serializer = WikiDocumentSerializer(document)
+
+        # Check the serialized data
+        serialized_data = serializer.data
+        self.assertEqual(serialized_data['title'], "Machine Learning")
+        self.assertEqual(serialized_data['content'], "Machine learning is a field of artificial intelligence.")
+        self.assertEqual(serialized_data['images'], [{"url": "ml_image.jpg", "alt": "Machine Learning"}])
+        self.assertEqual(serialized_data['html'], "<h1>Machine Learning</h1><p>Machine learning is a field of artificial intelligence.</p>")
+
+    

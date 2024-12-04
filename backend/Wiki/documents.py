@@ -1,9 +1,16 @@
-from django_elasticsearch_dsl import Document
+from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
 from .models import WikiArticle
 
 @registry.register_document
 class WikiDocument(Document):
+    images = fields.ObjectField(
+        properties={
+            'url': fields.TextField(),
+            'alt': fields.TextField()
+        }
+    )
+    
     class Index:
         name = 'wiki_articles'
         settings = {
@@ -13,4 +20,4 @@ class WikiDocument(Document):
     
     class Django:
         model = WikiArticle
-        fields = ['title', 'content']
+        fields = ['title', 'content', 'html', 'created_at', 'updated_at']

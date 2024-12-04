@@ -18,9 +18,9 @@ $ docker run -d --name elasticsearch \
   -p 9200:9200 -p 9300:9300 \
   -e "discovery.type=single-node" \
   -e "xpack.security.enabled=false" \
-  docker.elastic.co/elasticsearch/elasticsearch:8.10.0
-
+  docker.elastic.co/elasticsearch/elasticsearch:8.16.1
 ```
+Alternatively, **Elasticsearch** offers a variety of installing methods, you can go for any of these as long as the endpoints for Elasticsearch Database is at **http://localhost:9200**.
 
 2. Install the necessary dependencies
 ```bash
@@ -34,3 +34,14 @@ $ python manage.py migrate
 ```bash
 $ python manage.py test
 ```
+
+4. Test search API:
+```bash
+$ python manage.py createsuperuser
+$ python manage.py runserver
+```
+After the server is up, go to /admin to login and create some sample WikiArticles. The search API is located at /search
+
+![image](assets/adminpage.png)
+![image](assets/searchdemo1.png)
+![image](assets/searchdemo2.png)

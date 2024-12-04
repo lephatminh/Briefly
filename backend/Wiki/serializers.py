@@ -5,9 +5,9 @@ from .documents import *
 class WikiDocumentSerializer(DocumentSerializer):
     class Meta:
         model = WikiArticle
-        Document = WikiDocument
+        document = WikiDocument
         
-        fields = ('title', 'content', 'images', 'created_at', 'updated_at')
+        fields = ('title', 'content', 'images', 'html', 'created_at', 'updated_at')
         
         def get_location(self, obj):
             try:
