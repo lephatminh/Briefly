@@ -1,6 +1,6 @@
 # **Briefly - Setup Guide**
 
-This setup is using Docker to host ElasticSearch Database. Please install Docker before proceed.
+This is a guide to setup Elasticsearch database and Backend search API
 
 ## Installation
 
