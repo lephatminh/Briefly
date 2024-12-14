@@ -11,6 +11,13 @@ class WikiDocument(Document):
         }
     )
     
+    title = fields.KeywordField(
+        fields={
+            'raw': fields.KeywordField(),
+            'suggest': fields.CompletionField(),
+        },
+    )
+    
     class Index:
         name = 'wiki_articles'
         settings = {
@@ -20,4 +27,4 @@ class WikiDocument(Document):
     
     class Django:
         model = WikiArticle
-        fields = ['title', 'content', 'html', 'created_at', 'updated_at']
+        fields = ['content', 'html', 'created_at', 'updated_at']
