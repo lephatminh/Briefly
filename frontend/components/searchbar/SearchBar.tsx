@@ -1,9 +1,10 @@
 'use client'
 import { useState } from "react";
-import debounce from 'lodash/debounce'; // Import lodash debounce for better optimization
+import debounce from 'lodash/debounce';
 import { ArticleInterface } from "@/types/article";
 import { FaMagnifyingGlass } from 'react-icons/fa6'
 import { HiOutlineMicrophone } from 'react-icons/hi'
+import { useRouter } from "next/navigation";
 
 type Props = {
   size?: 'small' | 'large',
@@ -11,6 +12,7 @@ type Props = {
 };
 
 export default function SearchBar({ size='large', className }: Props) {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<ArticleInterface[]>([]);
   const [loading, setLoading] = useState(false);
@@ -32,39 +34,40 @@ export default function SearchBar({ size='large', className }: Props) {
     }
 
     setLoading(true);
-    // try {
-    //   const response = await fetch(`/api/search?search=${encodeURIComponent(keyword)}`);
-    //   if (response.ok) {
-    //     const data = await response.json();
-    //     setSuggestions(data.posts || []);
-    //     setCachedResults((prev) => ({ ...prev, [keyword]: data.posts || [] }));
-    //   } else {
-    //     console.error("Failed to fetch suggestions");
-    //   }
-    // } catch (error) {
-    //   console.error("Error fetching suggestions:", error);
-    // }
-    const data = {
-      posts: [
-        {
-          title: 'dalat',
-          imgSrc: 'dalat',
-          brief: 'dalat',
-        },
-        {
-          title: 'saigon',
-          imgSrc: 'saigon',
-          brief: 'saigon',
-        },
-        {
-          title: 'hue',
-          imgSrc: 'hue',
-          brief: 'hue',
-        },
-      ],
-    };
-    setSuggestions(data.posts || []);
-    setCachedResults((prev) => ({ ...prev, [keyword]: data.posts || [] }))
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/search?search=${encodeURIComponent(keyword)}/`);
+      console.log(response);
+      if (response.ok) {
+        const data = await response.json();
+        setSuggestions(data.posts || []);
+        setCachedResults((prev) => ({ ...prev, [keyword]: data.posts || [] }));
+      } else {
+        console.error("Failed to fetch suggestions");
+      }
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+    }
+    // const data = {
+    //   posts: [
+    //     {
+    //       title: 'dalat',
+    //       imgSrc: 'dalat',
+    //       brief: 'dalat',
+    //     },
+    //     {
+    //       title: 'saigon',
+    //       imgSrc: 'saigon',
+    //       brief: 'saigon',
+    //     },
+    //     {
+    //       title: 'hue',
+    //       imgSrc: 'hue',
+    //       brief: 'hue',
+    //     },
+    //   ],
+    // };
+    // setSuggestions(data.posts || []);
+    // setCachedResults((prev) => ({ ...prev, [keyword]: data.posts || [] }))
     setLoading(false);
   }, 500);
 
@@ -81,9 +84,10 @@ export default function SearchBar({ size='large', className }: Props) {
   };
 
   const handleSubmit = (suggestion: string) => {
-    alert(`You selected: ${suggestion}`); // Replace with your desired action
     setQuery("");
     setSuggestions([]);
+    alert(`You selected: ${suggestion}`); // Replace with your desired action
+    router.push('/article');
   };
 
   const textSize = size === 'large' ? 'text-2xl' : 'text-lg';
