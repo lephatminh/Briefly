@@ -2,16 +2,16 @@ import he from "he";
 
 type DetailsProps = {
   htmlContent: string;
-  createdAt: string;
-  updatedAt: string;
+  // createdAt: string;
+  // updatedAt: string;
   // images?: { url: string; alt: string }[];
 };
 
-export default function Details({ htmlContent, createdAt, updatedAt, /* images = [] */}: DetailsProps) {
+export default function Details({ htmlContent/* , createdAt, updatedAt, images = [] */}: DetailsProps) {
   const decodedHtml = he.decode(htmlContent);
-  console.log(decodedHtml);
+  // console.log(decodedHtml);
   return (
-    <div className="prose lg:prose-xl dark:prose-invert">
+    <div className="prose lg:prose-xl dark:prose-invert w-[701px] h-[957px] overflow-auto rounded-md py-3 pl-5 pr-16 no-scrollbar">
       <div dangerouslySetInnerHTML={{ __html: decodedHtml }} />
       
       {/* Render images
@@ -29,10 +29,10 @@ export default function Details({ htmlContent, createdAt, updatedAt, /* images =
       )} */}
       
       {/* Render timestamps */}
-      <div className="text-sm text-gray-600 mt-4">
+      {/* <div className="text-sm text-gray-600 mt-4">
         <p>Created at: {new Date(createdAt).toLocaleString()}</p>
         <p>Updated at: {new Date(updatedAt).toLocaleString()}</p>
-      </div>
+      </div> */}
     </div>
   );
 }

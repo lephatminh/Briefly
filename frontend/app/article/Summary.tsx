@@ -4,7 +4,7 @@ type SummaryProps = {
   
   export default function Summary({ summary }: SummaryProps) {
     return (
-      <div className="p-4">
+      <div className="prose lg:prose-xl dark:prose-invert w-[701px] h-[957px] overflow-auto">
         <p className="text-lg text-gray-800 dark:text-white">{summary}</p>
       </div>
     );

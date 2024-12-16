@@ -64,31 +64,49 @@ export default function Article() {
   // if (!articleData) return <p className="text-center mt-4">No article found.</p>;
 
   return (
-    <div className="m-4 border rounded shadow-lg">
-      <h1 className="text-2xl font-bold p-4 border-b">{articleData.title}</h1>
+    <div className="w-[701px] h-[957px] mx-auto">
+      {/* <h1 className="text-2xl font-bold p-4 border-b">{articleData.title}</h1> */}
       {/* Tabs */}
-      <div className="flex border-b">
+      <div className="flex items-center mt-4 justify-left space-x-8">
+        {/* Details Tab */}
         <button
           onClick={() => setActiveTab("details")}
-          className={`p-2 w-1/2 text-center ${activeTab === "details" ? "border-b-2 border-blue-500 font-bold" : ""}`}
+          className={`text-base ${
+            activeTab === "details"
+              ? "text-xl text-gray-800 dark:text-white font-bold"
+              : "text-gray-800 dark:text-white"
+          }`}
         >
           Details
         </button>
+
+        {/* Separator */}
+        <span className="text-lg text-gray-800 dark:text-white">|</span>
+
+        {/* Summary Tab */}
         <button
           onClick={() => setActiveTab("summary")}
-          className={`p-2 w-1/2 text-center ${activeTab === "summary" ? "border-b-2 border-blue-500 font-bold" : ""}`}
+          className={`text-base ${
+            activeTab === "summary"
+              ? "text-xl text-gray-800 dark:text-white font-bold"
+              : "text-gray-800 dark:text-white"
+          }`}
         >
           Summary
         </button>
       </div>
+
+    <div className="flex items-center mt-4 justify-end text-sm text-gray-500">
+      {new Date(articleData.created_at).toLocaleDateString("en-GB")}
+    </div>
       
       {/* Content */}
       <div className="p-4">
         {activeTab === "details" ? (
           <Details
             htmlContent={articleData.html}
-            createdAt={articleData.created_at}
-            updatedAt={articleData.updated_at}
+            // createdAt={articleData.created_at}
+            // updatedAt={articleData.updated_at}
             // images={articleData.images}
           />
         ) : (
