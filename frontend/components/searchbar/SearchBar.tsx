@@ -35,8 +35,8 @@ export default function SearchBar({ size='large', className }: Props) {
 
     setLoading(true);
     try {
-      const response = await fetch(`http://127.0.0.1:8000/search?search=${encodeURIComponent(keyword)}/`);
-      console.log(response);
+      const response = await fetch(`http://127.0.0.1:8000/search?q=${encodeURIComponent(keyword)}`);
+      // console.log(response);
       if (response.ok) {
         const data = await response.json();
         setSuggestions(data.posts || []);
@@ -45,6 +45,7 @@ export default function SearchBar({ size='large', className }: Props) {
         console.error("Failed to fetch suggestions");
       }
     } catch (error) {
+      console.log(`http://127.0.0.1:8000/search?q=${encodeURIComponent(keyword)}`);
       console.error("Error fetching suggestions:", error);
     }
     // const data = {
