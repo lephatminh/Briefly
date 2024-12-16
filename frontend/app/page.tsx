@@ -1,17 +1,28 @@
-import Image from "next/image";
 import Hero from "@/components/hero/Hero";
 import SearchBar from "@/components/searchbar/SearchBar";
 import Header from "@/components/header/Header";
+import Jumbotron from "@/components/jumbotron/Jumbotron";
+import Footer from "@/components/footer/Footer";
+import ThemeCardGroup from "@/components/card/ThemeGroup";
 
 export default function Home() {
   return (
-    <div className="w-full h-screen relative overflow-hidden">
+    <div className="w-full h-full relative overflow-hidden">
       <Header />
       <main className="h-screen flex flex-col items-center justify-center">
         <Hero />
         <SearchBar className="mt-4 md:w-1/2"/>
       </main>
-      <Image src={'/wiki.svg'} alt="wiki" width={100} height={100} className="absolute lg:rotate-0 md:-rotate-[14deg] md:-right-1/3 -right-1/4 md:top-1/3 top-1/2 h-full w-full md:h-[150%] md:w-[150%]"/>
+      <Jumbotron 
+        section="Article of the day"
+        title="Python"
+        content="Python was conceived in the late 1980s[41] by Guido van Rossum at Centrum Wiskunde & Informatica (CWI) in the Netherlands as a successor to the ABC programming language, which was inspired by SETL,[42] capable of exception handling and interfacing with the Amoeba operating system.[12] Its implementation began in December 1989."
+        image="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/242px-Python-logo-notext.svg.png"
+        alt="python"
+        className="lg:px-32 sm:px-20 px-1 py-12"
+        />
+      <ThemeCardGroup />
+      <Footer />
     </div>
   );
 };

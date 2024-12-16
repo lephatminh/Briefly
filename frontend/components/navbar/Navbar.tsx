@@ -1,3 +1,4 @@
+'use client'
 import { useState, useEffect } from 'react';
 import { RiMenu2Fill, RiCloseLine } from "react-icons/ri";
 import Link from 'next/link';
