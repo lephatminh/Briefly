@@ -2,6 +2,8 @@ from django.http import JsonResponse
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
 
+MAX_SUGGESTIONS = 6
+
 client = Elasticsearch("localhost:9200")
 
 def search_suggestions(request):
@@ -27,34 +29,32 @@ def search_suggestions(request):
 
         if 'title_suggestion' in response.suggest:
             for option in response.suggest['title_suggestion'][0].options:
-                suggestions.append({
-                    'text': option.text,
-                    'score': option._score,
-                    'post': {    
-                        'title': option._source.title,
-                        'content': option._source.content,
-                        'html': option._source.html,
-                        'images': str(option._source.images),
-                        'created_at': option._source.created_at,
-                        'updated_at': option._source.updated_at
-                    }
-                })
-                seen.add(option._source.title)
+                if len(seen) <= MAX_SUGGESTIONS:
+                    suggestions.append({
+                        'text': option.text,
+                        'score': option._score,
+                        'post': {    
+                            'id': option._source.id,
+                            'title': option._source.title,
+                            'image': {
+                                'url': option._source.images[0]['url'],
+                                'alt': option._source.images[0]['alt'],
+                            },
+                        }
+                    })
+                    seen.add(option._source.title)
 
-        if response.hits:
+        if len(seen) < MAX_SUGGESTIONS and response.hits:
             for hit in response.hits:
                 option = hit.to_dict()
-                if option['title'] not in seen:
+                if len(seen) < MAX_SUGGESTIONS and option['title'] not in seen:
                     suggestions.append({
                         'text': hit.content,
                         'score': hit.meta.score,
-                        'post': {    
+                        'post': {  
+                            'id': option['id'],
                             'title': option['title'],
-                            'content': option['content'],
-                            'html': option['html'],
-                            'images': option['images'],
-                            'created_at': option['created_at'],
-                            'updated_at': option['updated_at']
+                            'image': option['images'][0],
                         }
                     })
 

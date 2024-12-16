@@ -1,5 +1,11 @@
 export type ArticleInterface = {
-    title: string,
-    imgSrc: string,
-    brief: string,
+    text: string,
+    score: number,
+    post: {
+        title: string,
+        image: {
+            url: string,
+            alt: string,
+        },
+    },
 };
