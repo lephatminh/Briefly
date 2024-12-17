@@ -1,16 +1,18 @@
 from .models import WikiArticle
-from django_elasticsearch_dsl_drf.serializers import DocumentSerializer
+from rest_framework import serializers
 from .documents import *
 
-class WikiDocumentSerializer(DocumentSerializer):
+class SuggestionPostSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    title = serializers.CharField()
+    image = serializers.DictField()
+    
+class SuggestionSerializer(serializers.Serializer):
+    text = serializers.CharField()
+    score = serializers.FloatField()
+    post = SuggestionPostSerializer()
+    
+class WikiArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = WikiArticle
-        document = WikiDocument
-        
-        fields = ('title', 'content', 'images', 'html', 'created_at', 'updated_at')
-        
-        def get_location(self, obj):
-            try:
-                return obj.location.to_dict()
-            except:
-                return {}
+        fields = '__all__'

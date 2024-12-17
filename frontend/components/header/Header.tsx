@@ -26,7 +26,7 @@ export default function Header({ type='navbar', className }: Props) {
   return (
     <header className={`${className} left-0 top-0 z-50 flex w-full items-center justify-between px-4 py-2 ${
       sticky
-        ? "dark:bg-gray-dark dark:shadow-sticky-dark fixed z-[9999] bg-white !bg-opacity-80 shadow-sticky backdrop-blur-sm transition"
+        ? "dark:bg-gray-dark dark:shadow-sticky-dark fixed z-[9999] bg-white dark:bg-[#232323] !bg-opacity-80 shadow-sticky backdrop-blur-sm transition"
         : "absolute bg-transparent"
     }`}>
       {type === 'navbar' ? (
