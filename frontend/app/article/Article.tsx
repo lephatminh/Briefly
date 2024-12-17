@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useSearchParams } from "next/navigation";
@@ -14,7 +15,12 @@ import { ArticleData } from "@/types/article";
 //   );
 // };
 
-export default function Article(articleData: ArticleData) {
+type Props = {
+  articleData: ArticleData,
+  className?: string,
+}
+
+export default function Article({ articleData, className }: Props) {
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get("search"); // Extract query parameter
   // const [articleData, setArticleData] = useState<ArticleData | null>(null);
@@ -48,7 +54,7 @@ export default function Article(articleData: ArticleData) {
   // if (!articleData) return <p className="text-center mt-4">No article found.</p>;
 
   return (
-    <div className="w-[800px] max-h-screen mx-auto">
+    <div className={`w-[800px] max-h-screen mx-auto ${className}`}>
       {/* <h1 className="text-2xl font-bold p-4 border-b">{articleData.title}</h1> */}
       {/* Tabs */}
       <div className="flex items-center mt-4 justify-left space-x-8">

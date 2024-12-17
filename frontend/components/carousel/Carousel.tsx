@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useState } from 'react';
+import ImageWithFallback from '../image/ImageWithFallback';
 import { ArticleImage } from '@/types/article';
 
 interface CarouselProps {
     slides: ArticleImage[];
+    className?: string,
 }
 
-export default function Carousel({ slides }: CarouselProps) {
+export default function Carousel({ slides, className }: CarouselProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const goToPrevious = () => {
@@ -23,7 +25,7 @@ export default function Carousel({ slides }: CarouselProps) {
     };
 
     return (
-        <div className="flex items-center justify-center h-screen bg-gray-100">
+        <div className={`flex items-center justify-center h-screen bg-gray-100 ${className}`}>
             <div className="relative max-w-xs mx-auto">
                 {/* Carousel Wrapper */}
                 <div className="overflow-hidden relative w-72">
@@ -36,7 +38,12 @@ export default function Carousel({ slides }: CarouselProps) {
                                 key={index}
                                 className="w-72 flex-shrink-0 flex flex-col items-center justify-center"
                             >
-                                <img src={slide.url} alt={slide.alt} className="object-cover h-full w-full" onError={(e) => { e.currentTarget.src = '/placeholder.png'; }} />
+                                <ImageWithFallback 
+                                  imgSrc={slide.url} 
+                                  fallbackSrc='/blank-img.svg'
+                                  alt={slide.alt} 
+                                  width={200} height={200} 
+                                  className="object-cover h-full w-full" />
                                 <p className="mt-2 text-center text-gray-700">{slide.alt}</p>
                             </div>
                         ))}
