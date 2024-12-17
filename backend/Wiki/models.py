@@ -1,7 +1,8 @@
 from django.db import models
 
 class WikiArticle(models.Model):
-    title = models.CharField(max_length=255)
+    id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=255, unique=True)
     content = models.TextField()
     images = models.JSONField(default=list)
     html = models.TextField()
