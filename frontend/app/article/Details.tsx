@@ -11,7 +11,7 @@ export default function Details({ htmlContent/* , createdAt, updatedAt, images =
   const decodedHtml = he.decode(htmlContent);
   // console.log(decodedHtml);
   return (
-    <div className="prose lg:prose-xl dark:prose-invert w-[701px] h-[957px] overflow-auto rounded-md py-3 pl-5 pr-16 no-scrollbar">
+    <div className="prose lg:prose-xl dark:prose-invert w-[800px] max-h-screen overflow-auto rounded-md py-3 pl-5 pr-16 no-scrollbar">
       <div dangerouslySetInnerHTML={{ __html: decodedHtml }} />
       
       {/* Render images

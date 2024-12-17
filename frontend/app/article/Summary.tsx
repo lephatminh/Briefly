@@ -4,8 +4,8 @@ type SummaryProps = {
   
   export default function Summary({ summary }: SummaryProps) {
     return (
-      <div className="prose lg:prose-xl dark:prose-invert w-[701px] h-[957px] overflow-auto">
-        <p className="text-lg text-gray-800 dark:text-white">{summary}</p>
+      <div className="prose lg:prose-xl dark:prose-invert w-[800px] max-h-screen overflow-auto rounded-md py-3 pl-5 pr-16 no-scrollbar">
+        <p>{summary}</p>
       </div>
     );
   }

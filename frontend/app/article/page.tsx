@@ -64,44 +64,44 @@ export default function Article() {
   // if (!articleData) return <p className="text-center mt-4">No article found.</p>;
 
   return (
-    <div className="w-[701px] h-[957px] mx-auto">
+    <div className="w-[800px] max-h-screen mx-auto">
       {/* <h1 className="text-2xl font-bold p-4 border-b">{articleData.title}</h1> */}
       {/* Tabs */}
       <div className="flex items-center mt-4 justify-left space-x-8">
         {/* Details Tab */}
         <button
           onClick={() => setActiveTab("details")}
-          className={`text-base ${
+          className={`text-center w-[90px] h-[32px] flex items-center justify-center ${
             activeTab === "details"
               ? "text-xl text-gray-800 dark:text-white font-bold"
-              : "text-gray-800 dark:text-white"
+              : "text-gray-500 dark:text-gray-400 font-medium"
           }`}
         >
           Details
         </button>
 
-        {/* Separator */}
         <span className="text-lg text-gray-800 dark:text-white">|</span>
 
-        {/* Summary Tab */}
         <button
           onClick={() => setActiveTab("summary")}
-          className={`text-base ${
+          className={`text-center w-[90px] h-[32px] flex items-center justify-center ${
             activeTab === "summary"
               ? "text-xl text-gray-800 dark:text-white font-bold"
-              : "text-gray-800 dark:text-white"
+              : "text-gray-500 dark:text-gray-400 font-medium"
           }`}
         >
           Summary
         </button>
+
       </div>
 
-    <div className="flex items-center mt-4 justify-end text-sm text-gray-500">
+
+    <div className="flex items-center mt-4 justify-end text-sm text-gray-500 bg-gray-50 dark:bg-gray-600">
       {new Date(articleData.created_at).toLocaleDateString("en-GB")}
     </div>
       
       {/* Content */}
-      <div className="p-4">
+      <div className="bg-gray-50 dark:bg-gray-600">
         {activeTab === "details" ? (
           <Details
             htmlContent={articleData.html}
