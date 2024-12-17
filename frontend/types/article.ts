@@ -3,17 +3,19 @@ export type ArticleInterface = {
     score: number,
     post: {
         title: string,
-        image: {
-            url: string,
-            alt: string,
-        },
+        image: ArticleImage,
     },
+};
+
+export type ArticleImage = {
+    url: string;
+    alt: string;    
 };
 
 export type ArticleData = {
   title: string;
   content: string;
-  images?: { url: string; alt: string }[];
+  images: ArticleImage[];
   html: string;
   created_at: string;
   updated_at: string;
