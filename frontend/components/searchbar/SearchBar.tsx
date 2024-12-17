@@ -37,6 +37,7 @@ export default function SearchBar({ className }: Props) {
         console.error("Failed to fetch suggestions");
       }
     } catch (error) {
+      console.log(`http://127.0.0.1:8000/search?q=${encodeURIComponent(keyword)}`);
       console.error("Error fetching suggestions:", error);
     }
   };
