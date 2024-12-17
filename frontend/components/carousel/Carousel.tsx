@@ -1,14 +1,10 @@
 "use client";
 
 import React, { useState } from 'react';
-
-interface Slide {
-    url: string;
-    caption: string;
-}
+import { ArticleImage } from '@/types/article';
 
 interface CarouselProps {
-    slides: Slide[];
+    slides: ArticleImage[];
 }
 
 export default function Carousel({ slides }: CarouselProps) {
@@ -40,8 +36,8 @@ export default function Carousel({ slides }: CarouselProps) {
                                 key={index}
                                 className="w-72 flex-shrink-0 flex flex-col items-center justify-center"
                             >
-                                <img src={slide.url} alt={slide.caption} className="object-cover h-full w-full" onError={(e) => { e.currentTarget.src = '/placeholder.png'; }} />
-                                <p className="mt-2 text-center text-gray-700">{slide.caption}</p>
+                                <img src={slide.url} alt={slide.alt} className="object-cover h-full w-full" onError={(e) => { e.currentTarget.src = '/placeholder.png'; }} />
+                                <p className="mt-2 text-center text-gray-700">{slide.alt}</p>
                             </div>
                         ))}
                     </div>

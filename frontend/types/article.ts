@@ -3,3 +3,8 @@ export type ArticleInterface = {
     imgSrc: string,
     brief: string,
 };
+
+export type ArticleImage = {
+    url: string;
+    alt: string;
+};
