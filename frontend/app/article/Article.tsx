@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Details from "./Details";
 import Summary from "./Summary";
+import { ArticleData } from "@/types/article";
 
 // export default function Article() {
 //   return (
@@ -12,15 +13,6 @@ import Summary from "./Summary";
 //     </div>
 //   );
 // };
-
-export type ArticleData = {
-  title: string;
-  content: string;
-  images?: { url: string; alt: string }[];
-  html: string;
-  created_at: string;
-  updated_at: string;
-};
 
 export default function Article(articleData: ArticleData) {
   const searchParams = useSearchParams();

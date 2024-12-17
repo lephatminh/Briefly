@@ -1,4 +1,4 @@
-import Article, { ArticleData } from "./Article";
+import Article from "./Article";
 
 const articleData = {
   "title": "Girls Band Cry",
