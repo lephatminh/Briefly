@@ -26,11 +26,11 @@ export default function Navbar(props: Props) {
   }, []);
 
   return (
-    <div className={`flex flex-col sm:flex-row sm:justify-between text-sm ${props.className}`}>
+    <div className={`flex flex-col md:[@media(min-height:600px)]:flex-row md:[@media(min-height:600px)]:justify-between text-sm ${props.className}`}>
       {/* Menu Button (Visible on Small Screens) */}
       <button
         onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className="sm:hidden text-gray-900 dark:text-white text-xl px-4 py-2 rounded-md mb-2"
+        className="md:[@media(min-height:600px)]:hidden text-gray-900 dark:text-white text-xl px-4 py-2 rounded-md mb-2"
       >
         {isMenuOpen ? <RiCloseLine /> : <RiMenu2Fill />}
       </button>
@@ -39,27 +39,27 @@ export default function Navbar(props: Props) {
       <div
         className={`${
           isMenuOpen ? 'flex absolute top-16 left-8' : 'hidden'
-        } sm:flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 rounded-md sm:border-none dark:border-gray-300 dark:border sm:shadow-none shadow-md`}
+        } md:[@media(min-height:600px)]:flex flex-col md:[@media(min-height:600px)]:flex-row space-y-2 md:[@media(min-height:600px)]:space-y-0 md:[@media(min-height:600px)]:space-x-4 rounded-md md:[@media(min-height:600px)]:border-none dark:border-gray-300 dark:border md:[@media(min-height:600px)]:shadow-none shadow-md`}
       >
         <Link
           href="#"
-          className="sm:border-none text-gray-900 dark:text-white px-2 py-1 sm:py-0 sm:border-r-2 sm:border-r-gray-600"
+          className="md:[@media(min-height:600px)]:border-none text-gray-900 dark:text-white px-2 py-1 md:[@media(min-height:600px)]:py-0 md:[@media(min-height:600px)]:border-r-2 md:[@media(min-height:600px)]:border-r-gray-600"
         >
           Donate
         </Link>
         <Link
           href="#"
-          className="sm:border-none text-gray-900 dark:text-white px-2 py-1 sm:py-0 sm:border-r-2 sm:border-r-gray-600"
+          className="md:[@media(min-height:600px)]:border-none text-gray-900 dark:text-white px-2 py-1 md:[@media(min-height:600px)]:py-0 md:[@media(min-height:600px)]:border-r-2 md:[@media(min-height:600px)]:border-r-gray-600"
         >
           About
         </Link>
         <Link
           href="#"
-          className="sm:border-none text-gray-900 dark:text-white px-2 py-1 sm:py-0 sm:border-r-2 sm:border-r-gray-600"
+          className="md:[@media(min-height:600px)]:border-none text-gray-900 dark:text-white px-2 py-1 md:[@media(min-height:600px)]:py-0 md:[@media(min-height:600px)]:border-r-2 md:[@media(min-height:600px)]:border-r-gray-600"
         >
           Privacy Policy
         </Link>
-        <Link href="#" className="text-gray-900 dark:text-white px-2 py-1 sm:py-0">
+        <Link href="#" className="text-gray-900 dark:text-white px-2 py-1 md:[@media(min-height:600px)]:py-0">
           Contact Us
         </Link>
       </div>
