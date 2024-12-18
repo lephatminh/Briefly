@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-import re
 
 def parse_html_and_title(title):
     params = {
@@ -12,6 +11,9 @@ def parse_html_and_title(title):
     if req.status_code != 200:
         raise Exception("Failed to fetch the page.")
     res = req.json()
+    if "parse" not in res or "text" not in res["parse"]:
+        return None, None
+    # Add error handling for parsing errors  
     return res["parse"]["text"]["*"], res["parse"]["title"]
 
 def extract_figure_figcaption(html):
@@ -26,9 +28,9 @@ def extract_figure_figcaption(html):
             figcaption = figure.find("figcaption")
             figcaption_text = figcaption.get_text()
             
-            list_fig_figcaption.append((link, figcaption_text))
+            element = {
+                "url": link,
+                "alt": figcaption_text
+            }
+            list_fig_figcaption.append(element)
     return list_fig_figcaption
-
-html, title = parse_html_and_title("Entropy")
-list_fig_figcaption = extract_figure_figcaption(html)
-print(list_fig_figcaption)
