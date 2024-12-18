@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.0",
     "@tailwindcss/typography": "^0.5.15",
     "he": "^1.2.0",
     "lodash": "^4.17.21",
@@ -19,6 +20,7 @@
     "react-icons": "^5.4.0"
   },
   "devDependencies": {
+    "@types/he": "^1.2.3",
     "@types/lodash": "^4.17.13",
     "@types/node": "20.17.10",
     "@types/react": "18.3.16",

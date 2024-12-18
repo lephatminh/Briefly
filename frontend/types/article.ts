@@ -2,6 +2,7 @@ export type ArticleInterface = {
     text: string,
     score: number,
     post: {
+        id: number,
         title: string,
         image: ArticleImage,
     },
