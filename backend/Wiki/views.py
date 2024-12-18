@@ -37,6 +37,8 @@ def search_suggestions(request):
 
         if 'title_suggestion' in response.suggest:
             for option in response.suggest['title_suggestion'][0].options:
+                image = {'url': "/blank-img.svg", 'alt': 'image not found'} if not option._source.images \
+                    else {'url': option._source.images[0]['url'],'alt': option._source.images[0]['alt']}
                 if len(seen) <= MAX_SUGGESTIONS:
                     suggestion_data = {
                         'text': option.text,
@@ -44,10 +46,7 @@ def search_suggestions(request):
                         'post': {    
                             'id': option._source.id,
                             'title': option._source.title,
-                            'image': {
-                                'url': option._source.images[0]['url'],
-                                'alt': option._source.images[0]['alt'],
-                            },
+                            'image': image,
                         }
                     }
                     serializer = SuggestionSerializer(data=suggestion_data)

@@ -45,7 +45,7 @@ export default function Carousel({ slides, className }: CarouselProps) {
                   width={200} height={200} 
                   className="object-contain lg:w-72 lg:h-72 w-48 h-48" 
                 />
-                <p className="mt-2 text-center text-gray-500 dark:text-gray-300 font-medium">{slide.alt}</p>
+                <p className="mt-2 text-center text-sm text-gray-500 dark:text-gray-300 font-medium">{slide.alt}</p>
               </div>
             ))}
           </div>

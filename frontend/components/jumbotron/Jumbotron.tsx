@@ -24,7 +24,7 @@ export default function Jumbotron(props: Props) {
               fallbackSrc="./blank-img.svg"
               alt={alt} 
               width={200} height={200} 
-              className="sm:absolute top-10 left-10 sm:w-full sm:h-full w-[100px] h-[100px] bg-white rounded-3xl shadow-md object-contain"/>
+              className="sm:absolute top-10 left-10 sm:w-full sm:h-full w-[100px] h-[100px] bg-white rounded-3xl shadow-md object-fit"/>
           </div>
         )}
         <div className="flex flex-col mt-4 sm:ms-20">
