@@ -81,7 +81,6 @@ class WikiArticleDetailView(APIView):
     def get(self, request, *args, **kwargs):
         article_id = request.GET.get('id', None)
         
-        print(article_id)
         if article_id:
             article = get_object_or_404(WikiArticle, id=article_id)
         else:
