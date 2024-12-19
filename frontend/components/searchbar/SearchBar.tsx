@@ -1,8 +1,11 @@
 'use client'
+import "regenerator-runtime/runtime";
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import { useState } from "react";
 import { ArticleInterface } from "@/types/article";
 import { FaMagnifyingGlass } from 'react-icons/fa6'
 import { HiOutlineMicrophone } from 'react-icons/hi'
+import { TbMicrophoneOff } from "react-icons/tb";
 import { useRouter } from "next/navigation";
 import ImageWithFallback from "../image/ImageWithFallback";
 
@@ -13,6 +16,13 @@ type Props = {
 export default function SearchBar({ className }: Props) {
   const router = useRouter();
   const [suggestions, setSuggestions] = useState<ArticleInterface[]>([]);
+  const [inputValue, setInputValue] = useState("");
+  const {
+    transcript,
+    listening,
+    browserSupportsSpeechRecognition,
+    resetTranscript
+  } = useSpeechRecognition();
 
   const fetchSuggestions = async (keyword: string) => {
     if (!keyword) {
@@ -29,6 +39,7 @@ export default function SearchBar({ className }: Props) {
       });
       if (response.ok) {
         const data = await response.json();
+        console.log(data.suggestions);
         setSuggestions(data.suggestions || []);
       }
     } catch (error) {
@@ -37,8 +48,8 @@ export default function SearchBar({ className }: Props) {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    fetchSuggestions(value);
+    setInputValue(e.target.value);
+    fetchSuggestions(e.target.value);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -58,13 +69,22 @@ export default function SearchBar({ className }: Props) {
     <div className={`flex items-center max-w-xl px-4 py-2 ${className}`}>
       <FaMagnifyingGlass className="text-xl md:[@media(min-height:600px)]:text-3xl text-gray-400 dark:text-white me-2" />
       <div className={`relative w-full`}>
-        <input
-          type="text"
-          onChange={handleInputChange}
-          onKeyDown={handleKeyPress}
-          placeholder="Type the name of your subject..."
-          className="text-lg sm:text-xl md:[@media(min-height:600px)]:text-2xl w-full dark:bg-[#232323] px-1 py-2 text-gray-900 dark:text-white focus:outline-none placeholder:text-gray-400 dark:placeholder:text-gray-300 border-b-2 border-b-gray-200 dark:border-b-gray-300 transition duration-50"
-        />
+        {!listening ? 
+          <input
+            type="text"
+            value={inputValue}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyPress}
+            placeholder="Type the name of your subject..."
+            className="text-lg sm:text-xl md:[@media(min-height:600px)]:text-2xl w-full dark:bg-[#232323] px-1 py-2 text-gray-900 dark:text-white focus:outline-none placeholder:text-gray-400 dark:placeholder:text-gray-300 border-b-2 border-b-gray-200 dark:border-b-gray-300 transition duration-50"
+          /> :
+          <input
+            type="text"
+            value={transcript}
+            placeholder="Voice recording your subject..."
+            className="text-lg sm:text-xl md:[@media(min-height:600px)]:text-2xl w-full dark:bg-[#232323] px-1 py-2 text-gray-900 dark:text-white focus:outline-none placeholder:text-gray-400 dark:placeholder:text-gray-300 border-b-2 border-b-gray-200 dark:border-b-gray-300 transition duration-50"
+          />
+        }
         {suggestions.length > 0 && (
           <ul className="absolute z-10 bg-white dark:bg-[#232323] top-full left-0 w-full border border-gray-300 rounded-md shadow-md max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-[#3e3e3e] dark:scrollbar-track-[#232323]">
             {suggestions.map((suggestion, index) => (
@@ -96,8 +116,21 @@ export default function SearchBar({ className }: Props) {
           </ul>
         )}
       </div>
-      <button className="text-xl md:[@media(min-height:600px)]:text-3xl text-gray-400 dark:text-white hover:text-gray-500 dark:hover:text-gray-400 transition duration-300 ms-1">
-        <HiOutlineMicrophone />
+      <button 
+        disabled={!browserSupportsSpeechRecognition}
+        className="text-xl md:[@media(min-height:600px)]:text-3xl text-gray-400 dark:text-white hover:text-gray-500 dark:hover:text-gray-400 transition duration-300 ms-1"
+        onClick={() => {
+          if (listening) {
+            SpeechRecognition.stopListening();
+            fetchSuggestions(transcript);
+            setInputValue(transcript);
+          } else if (browserSupportsSpeechRecognition) {
+            resetTranscript();
+            SpeechRecognition.startListening({ continuous: true });
+          }
+        }}
+      >
+        {!listening || !browserSupportsSpeechRecognition ? <HiOutlineMicrophone /> : <TbMicrophoneOff />}
       </button>
     </div>
   );

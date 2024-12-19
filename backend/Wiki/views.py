@@ -12,7 +12,7 @@ import random
 
 client = Elasticsearch("localhost:9200")
 
-MAX_SUGGESTIONS = 10
+MAX_SUGGESTIONS = 20
 
 def search_suggestions(request):
     prefix = request.GET.get('q', None)
@@ -57,6 +57,7 @@ def search_suggestions(request):
         if len(seen) < MAX_SUGGESTIONS and response.hits:
             for hit in response.hits:
                 option = hit.to_dict()
+                image = option['images'][0] if option['images'] else {'url': "/blank-img.svg", 'alt': 'image not found'}
                 if len(seen) < MAX_SUGGESTIONS and option['title'] not in seen:
                     suggestion_data = {
                         'text': hit.content,
@@ -64,7 +65,7 @@ def search_suggestions(request):
                         'post': {  
                             'id': option['id'],
                             'title': option['title'],
-                            'image': option['images'][0],
+                            'image': image,
                         }
                     }
                     serializer = SuggestionSerializer(data=suggestion_data)
