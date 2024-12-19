@@ -8,6 +8,7 @@ from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
 from .serializers import SuggestionSerializer, WikiArticleSerializer
 from .models import WikiArticle
+from .summarization import summarize
 import random
 
 client = Elasticsearch("localhost:9200")
@@ -90,6 +91,10 @@ class WikiArticleDetailView(APIView):
                 return JsonResponse({'error': 'No article available'}, status=status.HTTP_404_NOT_FOUND)
             random_index = random.randint(0, count - 1)
             article = WikiArticle.objects.all()[random_index]
-            
+        
+        content = article.content
+        summary = summarize(content)  
         serializer = WikiArticleSerializer(article)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        data = serializer.data
+        data['content'] = summary
+        return Response(data, status=status.HTTP_200_OK)
