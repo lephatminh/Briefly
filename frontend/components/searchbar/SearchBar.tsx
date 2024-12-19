@@ -117,7 +117,6 @@ export default function SearchBar({ className }: Props) {
         )}
       </div>
       <button 
-        disabled={!browserSupportsSpeechRecognition}
         className="text-xl md:[@media(min-height:600px)]:text-3xl text-gray-400 dark:text-white hover:text-gray-500 dark:hover:text-gray-400 transition duration-300 ms-1"
         onClick={() => {
           if (listening) {
