@@ -1,62 +1,50 @@
 import ThemeCard from "./ThemeCard";
-import { LuLandmark } from "react-icons/lu";
 import { HiOutlineChip } from 'react-icons/hi'
-import { PiDna, PiSoccerBallLight, PiPalette } from "react-icons/pi";
-import { CiStethoscope } from "react-icons/ci";
+import { TbAtom, TbMath, TbSettingsCog } from "react-icons/tb";
+import { LuBrainCircuit, LuClipboardList } from "react-icons/lu";
 
 export default function ThemeCardGroup() {
   return (
     <div className="py-16 lg:px-48 sm:px-36 px-8 w-full">
       <h2 className="text-2xl sm:text-left text-center font-semibold text-[#232323] dark:text-white">
-        Categories
+        Features
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-12">
-        {/* Technologie Card */}
+        <ThemeCard
+          Icon={LuBrainCircuit}
+          theme="AI"
+          figure={'300+'}
+          unit="articles"
+        />
         <ThemeCard
           Icon={HiOutlineChip}
-          theme="Technology"
-          figure={6790}
+          theme="Computer Science"
+          figure={'200+'}
           unit="articles"
         />
-
-        {/* Science Card */}
         <ThemeCard
-          Icon={PiDna}
-          theme="Science"
-          figure={2250}
+          Icon={TbAtom}
+          theme="Physics"
+          figure={'300+'}
           unit="articles"
         />
-
-        {/* Medecine Card */}
         <ThemeCard
-          Icon={CiStethoscope}
-          theme="Medicine"
-          figure={1054}
+          Icon={TbSettingsCog}
+          theme="Engineering"
+          figure={'1000+'}
           unit="articles"
         />
-
-        {/* Sports Card */}
         <ThemeCard
-          Icon={PiSoccerBallLight}
-          theme="Sports"
-          figure="20K"
+          Icon={TbMath}
+          theme="Mathematics"
+          figure="300+"
           unit="articles"
         />
-
-        {/* Arts Card */}
         <ThemeCard
-          Icon={PiPalette}
-          theme="Arts"
-          figure={7800}
-          unit="articles"
-        />
-
-        {/* Politique Card */}
-        <ThemeCard
-          Icon={LuLandmark}
-          theme="Politics"
-          figure="12K"
-          unit="articles"
+          Icon={LuClipboardList}
+          theme="Summarization"
+          figure="2000+"
+          unit="AI Summary"
         />
       </div>
     </div>

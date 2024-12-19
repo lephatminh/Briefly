@@ -12,7 +12,7 @@ import random
 
 client = Elasticsearch("localhost:9200")
 
-MAX_SUGGESTIONS = 6
+MAX_SUGGESTIONS = 10
 
 def search_suggestions(request):
     prefix = request.GET.get('q', None)

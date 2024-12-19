@@ -30,8 +30,6 @@ export default function SearchBar({ className }: Props) {
       if (response.ok) {
         const data = await response.json();
         setSuggestions(data.suggestions || []);
-      } else {
-        console.error("Failed to fetch suggestions");
       }
     } catch (error) {
       console.error("Error fetching suggestions:", error);
