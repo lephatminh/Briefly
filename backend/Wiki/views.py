@@ -2,13 +2,14 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Count
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import status
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
-from .serializers import SuggestionSerializer, WikiArticleSerializer
+from sumy.parsers.plaintext import PlaintextParser
+from sumy.nlp.tokenizers import Tokenizer
+from sumy.summarizers.lex_rank import LexRankSummarizer
+from .serializers import SuggestionSerializer
 from .models import WikiArticle
-from .summarization import summarize
 import random
 
 client = Elasticsearch("localhost:9200")
@@ -82,7 +83,6 @@ class WikiArticleDetailView(APIView):
     def get(self, request, *args, **kwargs):
         article_id = request.GET.get('id', None)
         
-        print(article_id)
         if article_id:
             article = get_object_or_404(WikiArticle, id=article_id)
         else:
@@ -91,10 +91,27 @@ class WikiArticleDetailView(APIView):
                 return JsonResponse({'error': 'No article available'}, status=status.HTTP_404_NOT_FOUND)
             random_index = random.randint(0, count - 1)
             article = WikiArticle.objects.all()[random_index]
-        
-        content = article.content
-        summary = summarize(content)  
-        serializer = WikiArticleSerializer(article)
-        data = serializer.data
-        data['content'] = summary
-        return Response(data, status=status.HTTP_200_OK)
+            
+        # Summarize the article content using Sumy
+        try:
+            # Initialize Sumy components
+            parser = PlaintextParser.from_string(article.content, Tokenizer("english"))
+            summarizer = LexRankSummarizer()
+            
+            # Specify the number of sentences for the summary
+            summary_sentences = summarizer(parser.document)
+            
+            # Combine summarized sentences into a single string
+            summarized_content = ' '.join(str(sentence) for sentence in summary_sentences)
+        except Exception as e:
+            summarized_content = "Error summarizing the content."
+            
+        return JsonResponse({
+            'id': article.id,
+            'title': article.title,
+            'content': summarized_content,
+            'images': article.images,
+            'html': article.html,
+            'created_at': article.created_at,
+            'updated_at': article.updated_at
+        }, status=status.HTTP_200_OK)
