@@ -1,6 +1,6 @@
 # **Briefly - Setup Guide**
 
-This is a guide to setup Elasticsearch database and Backend search API
+This is a guide to setup Briefly Development environment.
 
 ## Installation
 
@@ -20,30 +20,27 @@ $ docker run -d --name elasticsearch \
   -e "xpack.security.enabled=false" \
   docker.elastic.co/elasticsearch/elasticsearch:8.16.1
 ```
-Alternatively, **Elasticsearch** offers a variety of installing methods, you can go for any of these as long as the endpoints for Elasticsearch Database is at **http://localhost:9200**.
+Alternatively, **Elasticsearch** offers a variety of installing methods, you can go for any of these as long as the endpoints for Elasticsearch is at **http://localhost:9200**.
 
 2. Install the necessary dependencies
 ```bash
+$ python3 -m venv venv
 $ pip install -m requirements.txt
+```
+
+3. Setup backend
+```bash
 $ cd backend
 $ python manage.py makemigrations
 $ python manage.py migrate
 $ python manage.py search_index --rebuild
 ```
 
-3. Test to see if the elasticsearch is setup
+3. Setup frontend:
+Open another terminal and input the following:
 ```bash
-$ python manage.py test
+$ cd frontend
+$ npm install
+$ npm run dev
 ```
 
-4. Test search API:
-```bash
-$ python manage.py createsuperuser
-$ python manage.py runserver
-```
-After the server is up, go to /admin to login and create some sample WikiArticles.
-![image](assets/adminpage.png)
-![image](assets/searchdemo1.png)
-
-The search API is located at /search.
-![image](assets/searchdemo2.png)
