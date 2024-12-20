@@ -2,14 +2,20 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Count
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import status
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
-from .serializers import SuggestionSerializer, WikiArticleSerializer
+from sumy.parsers.plaintext import PlaintextParser
+from sumy.nlp.tokenizers import Tokenizer
+from sumy.summarizers.lex_rank import LexRankSummarizer
+from .serializers import SuggestionSerializer
 from .models import WikiArticle
 import random
+import logging
+import nltk
 
+logger = logging.getLogger(__name__)
+nltk.download('punkt_tab')
 client = Elasticsearch("localhost:9200")
 
 MAX_SUGGESTIONS = 20
@@ -90,5 +96,42 @@ class WikiArticleDetailView(APIView):
             random_index = random.randint(0, count - 1)
             article = WikiArticle.objects.all()[random_index]
             
-        serializer = WikiArticleSerializer(article)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        # Summarize the article content using Sumy
+        try:
+            # Validate content
+            if not article.content or len(article.content.strip()) == 0:
+                raise ValueError("Empty content")
+
+            # Initialize Sumy components
+            content = article.content.replace("\\", "")
+            index = content.find("See also")
+            if index != -1:
+                content = content[:index]
+            parser = PlaintextParser.from_string(content, Tokenizer("english"))
+            summarizer = LexRankSummarizer()
+            
+            # Set number of sentences (e.g., 3 sentences)
+            summary_sentences = summarizer(parser.document, sentences_count=12)
+            
+            if not summary_sentences:
+                raise ValueError("No summary generated")
+            
+            # Combine summarized sentences
+            summarized_content = ' '.join(str(sentence) for sentence in summary_sentences)
+            
+        except ValueError as ve:
+            logger.error(f"Validation error: {str(ve)}")
+            summarized_content = "Could not generate summary: invalid content"
+        except Exception as e:
+            logger.error(f"Summarization error: {str(e)}")
+            summarized_content = "Error generating summary"
+            
+        return JsonResponse({
+            'id': article.id,
+            'title': article.title,
+            'content': summarized_content,
+            'images': article.images,
+            'html': article.html,
+            'created_at': article.created_at,
+            'updated_at': article.updated_at
+        }, status=status.HTTP_200_OK)
