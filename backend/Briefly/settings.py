@@ -88,8 +88,12 @@ CSRF_TRUSTED_ORIGINS = [
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': 'aws-0-ap-southeast-1.pooler.supabase.com',
+        'NAME': 'postgres',
+        'USER': 'postgres.zaadprwyouibomrxwbst',
+        'PASSWORD': 'qVNBz5r.t9z**U7',
+        'PORT': '6543'
     }
 }
 
