@@ -25,7 +25,7 @@ Alternatively, **Elasticsearch** offers a variety of installing methods, you can
 2. Install the necessary dependencies
 ```bash
 $ python3 -m venv venv
-$ pip install -m requirements.txt
+$ pip install -r requirements.txt
 ```
 
 3. Setup backend
