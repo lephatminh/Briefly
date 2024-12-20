@@ -29,7 +29,6 @@ path==17.0.0
 path.py==12.5.0
 pip-autoremove==0.10.0
 platformdirs==4.3.6
-psycopg2==2.9.10
 psycopg2-binary==2.9.10
 pycountry==24.6.1
 pypandoc==1.14
