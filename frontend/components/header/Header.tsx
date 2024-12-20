@@ -59,7 +59,7 @@ export default function Header({ type='navbar', className }: Props) {
           <IoIosCloseCircleOutline />
         </button>
         <div className="w-full h-fit px-6 flex justify-center rounded-2xl">
-          <SearchBar className='w-full bg-white dark:bg-[#232323] rounded-xl shadow-md'/>
+          <SearchBar onSubmit={() => setSearchBarVisisble(false)} className='w-full bg-white dark:bg-[#232323] rounded-xl shadow-md'/>
         </div>
       </Dialog>
     </header>

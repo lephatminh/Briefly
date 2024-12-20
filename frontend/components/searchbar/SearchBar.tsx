@@ -10,10 +10,11 @@ import { useRouter } from "next/navigation";
 import ImageWithFallback from "../image/ImageWithFallback";
 
 type Props = {
+  onSubmit?: () => void
   className?: string,
 };
 
-export default function SearchBar({ className }: Props) {
+export default function SearchBar({ onSubmit, className }: Props) {
   const router = useRouter();
   const [suggestions, setSuggestions] = useState<ArticleInterface[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -61,6 +62,9 @@ export default function SearchBar({ className }: Props) {
   const handleSubmit = (suggestion: ArticleInterface) => {
     if (suggestion) {
       setSuggestions([]);
+      if (onSubmit) {
+        onSubmit();
+      }
       router.push(`/article?id=${suggestion.post.id}`);
     }
   };

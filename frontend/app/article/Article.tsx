@@ -95,7 +95,7 @@ export default function Article({ className }: Props) {
             </p>
           </div>
           {/* Content */}
-          <div className="bg-gray-100 dark:bg-slate-700 p-4 rounded-2xl w-full h-[1200px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-[#3e3e3e] dark:scrollbar-track-[#232323] shadow-md">
+          <div className="bg-gray-100 dark:bg-slate-700 p-4 rounded-2xl w-full sm:h-[1200px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-[#3e3e3e] dark:scrollbar-track-[#232323] shadow-md">
             {activeTab === "details" ? (
               <Details
                 htmlContent={articleData.html}
