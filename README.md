@@ -22,13 +22,13 @@ $ docker run -d --name elasticsearch \
 ```
 Alternatively, **Elasticsearch** offers a variety of installing methods, you can go for any of these as long as the endpoints for Elasticsearch is at **http://localhost:9200**.
 
-1. Install the necessary dependencies (make sure your python is version 3.13.0 or below)
+2. Install the necessary dependencies (make sure your python is version 3.13.0 or below)
 ```bash
 $ python3 -m venv venv
 $ pip install -r requirements.txt
 ```
 
-1. Setup backend
+3. Setup backend
 ```bash
 $ cd backend
 $ python manage.py makemigrations
@@ -37,7 +37,7 @@ $ python manage.py search_index --rebuild
 $ python manage.py runserver
 ```
 
-1. Setup frontend:
+4. Setup frontend:
   Open another terminal and input the following:
 ```bash
 $ cd frontend
