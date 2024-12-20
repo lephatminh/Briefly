@@ -34,6 +34,7 @@ $ cd backend
 $ python manage.py makemigrations
 $ python manage.py migrate
 $ python manage.py search_index --rebuild
+$ python manage.py runserver
 ```
 
 3. Setup frontend:
