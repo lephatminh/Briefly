@@ -11,7 +11,11 @@ from sumy.summarizers.lex_rank import LexRankSummarizer
 from .serializers import SuggestionSerializer
 from .models import WikiArticle
 import random
+import logging
+import nltk
 
+logger = logging.getLogger(__name__)
+nltk.download('punkt_tab')
 client = Elasticsearch("localhost:9200")
 
 MAX_SUGGESTIONS = 6
@@ -94,17 +98,33 @@ class WikiArticleDetailView(APIView):
             
         # Summarize the article content using Sumy
         try:
+            # Validate content
+            if not article.content or len(article.content.strip()) == 0:
+                raise ValueError("Empty content")
+
             # Initialize Sumy components
-            parser = PlaintextParser.from_string(article.content, Tokenizer("english"))
+            content = article.content.replace("\\", "")
+            index = content.find("See also")
+            if index != -1:
+                content = content[:index]
+            parser = PlaintextParser.from_string(content, Tokenizer("english"))
             summarizer = LexRankSummarizer()
             
-            # Specify the number of sentences for the summary
-            summary_sentences = summarizer(parser.document)
+            # Set number of sentences (e.g., 3 sentences)
+            summary_sentences = summarizer(parser.document, sentences_count=12)
             
-            # Combine summarized sentences into a single string
+            if not summary_sentences:
+                raise ValueError("No summary generated")
+            
+            # Combine summarized sentences
             summarized_content = ' '.join(str(sentence) for sentence in summary_sentences)
+            
+        except ValueError as ve:
+            logger.error(f"Validation error: {str(ve)}")
+            summarized_content = "Could not generate summary: invalid content"
         except Exception as e:
-            summarized_content = "Error summarizing the content."
+            logger.error(f"Summarization error: {str(e)}")
+            summarized_content = "Error generating summary"
             
         return JsonResponse({
             'id': article.id,
