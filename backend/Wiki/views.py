@@ -11,6 +11,7 @@ from sumy.summarizers.lex_rank import LexRankSummarizer
 from .serializers import SuggestionSerializer
 from .models import WikiArticle
 import random
+import time
 import logging
 import nltk
 
@@ -18,7 +19,7 @@ logger = logging.getLogger(__name__)
 nltk.download('punkt_tab')
 client = Elasticsearch("localhost:9200")
 
-MAX_SUGGESTIONS = 20
+MAX_SUGGESTIONS = 10
 
 def search_suggestions(request):
     prefix = request.GET.get('q', None)
@@ -85,6 +86,7 @@ def search_suggestions(request):
 
 class WikiArticleDetailView(APIView):
     def get(self, request, *args, **kwargs):
+        start_time = time.time()
         article_id = request.GET.get('id', None)
         
         if article_id:
@@ -126,6 +128,9 @@ class WikiArticleDetailView(APIView):
             logger.error(f"Summarization error: {str(e)}")
             summarized_content = "Error generating summary"
             
+        end_time = time.time()
+        response_time = end_time - start_time
+            
         return JsonResponse({
             'id': article.id,
             'title': article.title,
@@ -133,5 +138,6 @@ class WikiArticleDetailView(APIView):
             'images': article.images,
             'html': article.html,
             'created_at': article.created_at,
-            'updated_at': article.updated_at
+            'updated_at': article.updated_at,
+            'response_time': response_time
         }, status=status.HTTP_200_OK)
