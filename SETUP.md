@@ -37,8 +37,8 @@ $ python manage.py search_index --rebuild
 $ python manage.py runserver
 ```
 
-3. Setup frontend:
-Open another terminal and input the following:
+4. Setup frontend:
+  Open another terminal and input the following:
 ```bash
 $ cd frontend
 $ npm install
