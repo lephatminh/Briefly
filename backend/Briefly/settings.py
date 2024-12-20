@@ -99,7 +99,7 @@ DATABASES = {
 
 ELASTICSEARCH_DSL={
     'default': {
-        'hosts': 'http://localhost:9200',
+        'hosts': 'https://ctl9qkj772:dp1ukog5pk@briefly-7331111555.us-east-1.bonsaisearch.net:443',
     }
 }
 

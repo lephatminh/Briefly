@@ -14,7 +14,7 @@ export default function Jumbotron({ className }: Props) {
   
     const fetchArticleOtd = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/search/article`, {
+        const response = await fetch(`http://127.0.0.1:8000/article`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

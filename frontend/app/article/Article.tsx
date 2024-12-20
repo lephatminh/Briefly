@@ -13,18 +13,18 @@ type Props = {
 
 export default function Article({ className }: Props) {
   const searchParams = useSearchParams();
-  const searchQuery = searchParams.get("id");
+  const articleId = searchParams.get("id");
   const [articleData, setArticleData] = useState<ArticleData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<"details" | "summary">("details");
 
   useEffect(() => {
     const fetchArticleData = async () => {
-      if (!searchQuery) return;
+      if (!articleId) return;
 
       setLoading(true);
       try {
-        const response = await fetch(`http://127.0.0.1:8000/search/article?id=${encodeURIComponent(searchQuery)}`);
+        const response = await fetch(`http://127.0.0.1:8000/article?id=${encodeURIComponent(articleId)}`);
         if (response.ok) {
           const data: ArticleData = await response.json();
           setArticleData(data);
@@ -39,7 +39,7 @@ export default function Article({ className }: Props) {
     };
 
     fetchArticleData();
-  }, [searchQuery]);
+  }, [articleId]);
 
   if (loading) return <p className="text-center mt-4">Loading...</p>;
   if (!articleData) return <p className="text-center mt-4">No article found.</p>;
