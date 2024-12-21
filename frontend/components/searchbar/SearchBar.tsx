@@ -32,7 +32,7 @@ export default function SearchBar({ onSubmit, className }: Props) {
     }
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/search?q=${encodeURIComponent(keyword)}`, {
+      const response = await fetch(`https://briefly-sqwo.onrender.com/search?q=${encodeURIComponent(keyword)}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
