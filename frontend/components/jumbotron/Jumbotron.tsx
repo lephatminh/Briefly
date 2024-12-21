@@ -43,7 +43,7 @@ export default function Jumbotron({ className }: Props) {
       </h2>
       <div className="sm:flex sm:flex-row w-full sm:h-[450px] h-[570px] px-16 sm:py-12">
         {articleOtd && articleOtd.images.length > 0 && (
-          <div className="relative sm:block flex justify-center sm:bg-gray-200 lg:w-[200px] lg:h-[200px] sm:w-[180px] sm:h-[180px] rounded-3xl sm:shadow-xl lg:pe-48 sm:pe-40">
+          <div className="relative sm:block flex justify-center sm:bg-gray-200 lg:w-[200px] lg:h-[200px] sm:w-[180px] sm:h-[180px] rounded-3xl sm:shadow-xl lg:pe-48 sm:pe-40 ">
             <ImageWithFallback
               imgSrc={articleOtd.images[0].url} 
               fallbackSrc="./blank-img.svg"
@@ -52,7 +52,7 @@ export default function Jumbotron({ className }: Props) {
               className="sm:absolute top-10 left-10 sm:w-full sm:h-full w-[100px] h-[100px] bg-white rounded-3xl shadow-md object-fit"/>
           </div>
         )}
-        <div className="flex flex-col mt-4 sm:ms-20">
+        <div className="flex flex-col mt-4 sm:ms-20 h-full">
           <p className="flex flex-col lg:h-[60%] h-1/2">
             <span className="text-xl sm:text-left text-center font-medium text-[#232323] dark:text-white mb-4">{articleOtd?.title}</span>
             <span className="text-md sm:text-left text-justify h-2/3 text-[#232323] dark:text-gray-50 overflow-hidden">{articleOtd?.content}</span>

@@ -26,8 +26,12 @@ class WikiArticleDetailView(APIView):
             count = WikiArticle.objects.aggregate(count=Count('id'))['count']
             if count == 0:
                 return JsonResponse({'error': 'No article available'}, status=status.HTTP_404_NOT_FOUND)
+            
             random_index = random.randint(0, count - 1)
             article = WikiArticle.objects.all()[random_index]
+            while article.html.startswith('<ol>\n<li>'):
+                random_index = random.randint(0, count - 1)
+                article = WikiArticle.objects.all()[random_index]
             
         # Summarize the article content using Sumy
         try:

@@ -48,9 +48,9 @@ export default function Article({ className }: Props) {
     <div className={`max-w-full overflow-hidden ${className}`}>
       {/* Tabs */}
       <h1 className="text-5xl tracking-wide text-center font-bold mb-8">{articleData.title}</h1>
-      <section className="flex justify-around sm:space-x-6 p-4 sm:p-16">
+      <section className="flex md:flex-row flex-col justify-around sm:space-x-6 p-4 sm:p-16">
         {articleData.images.length > 0 && 
-          <div className="flex flex-col items-center mt-5">
+          <div className="hidden md:flex flex-col items-center mt-5">
             <div className="flex-shrink-0 flex flex-col bg-gray-100 dark:bg-gray-500 p-3 rounded-xl lg:w-72 w-48">
               <ImageWithFallback 
                 imgSrc={articleData.images[0].url} 
@@ -63,6 +63,11 @@ export default function Article({ className }: Props) {
             </div>
             {articleData.images.length > 1 && <Carousel slides={articleData.images.slice(1, Math.floor(articleData.images.length / 2) + 1)} className="my-4" />}
             {articleData.images.length > 2 && <Carousel slides={articleData.images.slice(Math.floor(articleData.images.length / 2) + 1)} className="my-4" />}
+          </div>
+        }
+        {articleData.images.length > 0 && 
+          <div className="md:hidden flex justify-center items-center my-5">
+            <Carousel slides={articleData.images} className="my-4" />
           </div>
         }
         <div>
