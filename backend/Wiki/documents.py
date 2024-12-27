@@ -27,4 +27,4 @@ class WikiDocument(Document):
     
     class Django:
         model = WikiArticle
-        fields = ['id', 'content', 'updated_at', 'popularity']
+        fields = ['id', 'content', 'popularity']
