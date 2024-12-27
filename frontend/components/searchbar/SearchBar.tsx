@@ -32,7 +32,7 @@ export default function SearchBar({ onSubmit, className }: Props) {
     }
 
     try {
-      const response = await fetch(`https://briefly-sqwo.onrender.com/search?q=${encodeURIComponent(keyword)}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_DEPLOY}/search?q=${encodeURIComponent(keyword)}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

@@ -3,8 +3,10 @@ from rest_framework import status
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
 from .serializers import SuggestionSerializer
+from django.conf import settings
 import re
-client = Elasticsearch("https://ctl9qkj772:dp1ukog5pk@briefly-7331111555.us-east-1.bonsaisearch.net:443")
+
+client = Elasticsearch(settings.ELASTICSEARCH_DSL['default']['hosts'])
 
 MAX_SUGGESTIONS = 10
 
@@ -26,7 +28,8 @@ def search_suggestions(request):
 
         response = s.execute()
 
-        suggestions = []
+        title_matches = []
+        content_matches = []
         seen = set()
 
         if 'title_suggestion' in response.suggest:
@@ -37,6 +40,7 @@ def search_suggestions(request):
                     suggestion_data = {
                         'text': option.text,
                         'score': option._score,
+                        'popularity': option._source.popularity,    
                         'post': {    
                             'id': option._source.id,
                             'title': option._source.title,
@@ -45,17 +49,18 @@ def search_suggestions(request):
                     }
                     serializer = SuggestionSerializer(data=suggestion_data)
                     if serializer.is_valid():
-                        suggestions.append(serializer.validated_data)
+                        title_matches.append(serializer.validated_data)
                     seen.add(option._source.title)
 
-        if len(seen) < MAX_SUGGESTIONS and response.hits:
+        if response.hits:
             for hit in response.hits:
                 option = hit.to_dict()
                 image = option['images'][0] if option['images'] else {'url': "/blank-img.svg", 'alt': 'image not found'}
-                if len(seen) < MAX_SUGGESTIONS and option['title'] not in seen:
+                if option['title'] not in seen:
                     suggestion_data = {
-                        'text': ' '.join(re.split(r'(?<=[.!?])\s+', hit.content.strip())[:4]), # get first 4 sentences
+                        'text': ' '.join(re.split(r'(?<=[.!?])\s+', hit.content.strip())[:4]),
                         'score': hit.meta.score,
+                        'popularity': option['popularity'],
                         'post': {  
                             'id': option['id'],
                             'title': option['title'],
@@ -64,9 +69,14 @@ def search_suggestions(request):
                     }
                     serializer = SuggestionSerializer(data=suggestion_data)
                     if serializer.is_valid():
-                        suggestions.append(suggestion_data)
+                        content_matches.append(suggestion_data)
                     seen.add(option['title'])
+                    
+        title_matches = sorted(title_matches, key=lambda x: x['popularity'], reverse=True)
+        content_matches = sorted(content_matches, key=lambda x: x['popularity'], reverse=True)
 
-        return JsonResponse({'suggestions': suggestions}, status=status.HTTP_200_OK)
+        suggestions = title_matches + content_matches
+
+        return JsonResponse({'suggestions': suggestions[:20]}, status=status.HTTP_200_OK)
 
     return JsonResponse({'error': 'No prefix provided'}, status=status.HTTP_400_BAD_REQUEST)
