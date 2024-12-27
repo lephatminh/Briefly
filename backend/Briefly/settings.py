@@ -106,7 +106,7 @@ DATABASES = {
 
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': env('ELASTICSEARCH_LOCAL')
+        'hosts': env('ELASTICSEARCH_DEPLOY')
     }
 }
 
