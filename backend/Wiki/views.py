@@ -22,6 +22,8 @@ class WikiArticleDetailView(APIView):
         
         if article_id:
             article = get_object_or_404(WikiArticle, id=article_id)
+            article.popularity += 1
+            article.save(update_fields=['popularity'])
         else:
             count = WikiArticle.objects.aggregate(count=Count('id'))['count']
             if count == 0:

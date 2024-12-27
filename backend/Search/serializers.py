@@ -8,4 +8,5 @@ class SuggestionPostSerializer(serializers.Serializer):
 class SuggestionSerializer(serializers.Serializer):
     text = serializers.CharField()
     score = serializers.FloatField()
+    popularity = serializers.IntegerField()
     post = SuggestionPostSerializer()
