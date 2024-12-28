@@ -55,7 +55,7 @@ export default function Jumbotron({ className }: Props) {
         <div className="flex flex-col mt-4 sm:ms-20 h-full">
           <p className="flex flex-col lg:h-[60%] h-1/2">
             <span className="text-xl sm:text-left text-center font-medium text-[#232323] dark:text-white mb-4">{articleOtd?.title}</span>
-            <span className="text-md sm:text-left text-justify h-2/3 text-[#232323] dark:text-gray-50 overflow-hidden">{articleOtd?.content}</span>
+            <span className="text-md sm:text-left text-justify h-2/3 text-[#232323] dark:text-gray-50 overflow-hidden">{articleOtd?.teaser}</span>
           </p>
           <button onClick={() => router.push(`/article?id=${articleOtd?.id}`)}
             className="bg-[#232323] text-sm mx-auto sm:me-4 mt-3 hover:bg-white text-white hover:text-[#232323] hover:border-gray-300 dark:border-gray-300 border rounded-xl dark:hover:bg-[#232323] dark:bg-white dark:hover:text-white dark:text-[#232323] p-4 sm:w-fit w-full transition duration-300 font-medium">

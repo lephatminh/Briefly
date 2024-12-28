@@ -6,6 +6,7 @@ import ImageWithFallback from "@/components/image/ImageWithFallback";
 import Carousel from "@/components/carousel/Carousel";
 import Details from "./Details";
 import Summary from "./Summary";
+import Chatbot from "./Chatbot";
 
 type Props = {
   className?: string,
@@ -16,7 +17,8 @@ export default function Article({ className }: Props) {
   const articleId = searchParams.get("id");
   const [articleData, setArticleData] = useState<ArticleData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [activeTab, setActiveTab] = useState<"details" | "summary">("details");
+  const [activeTab, setActiveTab] = useState<"details" | "summary" | "Q&A">("details");
+  const [summary, setSummary] = useState("");
 
   useEffect(() => {
     const fetchArticleData = async () => {
@@ -38,7 +40,25 @@ export default function Article({ className }: Props) {
       }
     };
 
+    const fetchSummary = async () => {
+      if (!articleId) return;
+
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_DEPLOY}/article/summary?id=${encodeURIComponent(articleId)}`);
+        if (response.ok) {
+          const data = await response.json();
+          setSummary(data.summary);
+        } else {
+          console.error("Failed to fetch article summary.")
+        }
+      } catch (error) {
+        console.error("Error fetching article summary: ", error);
+      }
+    };
+
     fetchArticleData();
+    fetchSummary();
+
   }, [articleId]);
 
   if (loading) return <p className="text-center mt-4">Loading...</p>;
@@ -47,7 +67,7 @@ export default function Article({ className }: Props) {
   return (
     <div className={`max-w-full overflow-hidden ${className}`}>
       {/* Tabs */}
-      <h1 className="text-5xl tracking-wide text-center font-bold mb-8">{articleData.title}</h1>
+      <h1 className="sm:text-5xl text-4xl tracking-wide text-center font-bold mb-8 p-4">{articleData.title}</h1>
       <section className="flex md:flex-row flex-col justify-around sm:space-x-6 p-4 sm:p-16">
         {articleData.images.length > 0 && 
           <div className="hidden md:flex flex-col items-center mt-5">
@@ -70,12 +90,12 @@ export default function Article({ className }: Props) {
             <Carousel slides={articleData.images} className="my-4" />
           </div>
         }
-        <div>
+        <div className="w-full">
           <div className="flex items-center justify-between w-full my-4">
             <div className="flex space-x-8">
               <button
                 onClick={() => setActiveTab("details")}
-                className={`text-center w-1/2 h-[32px] flex items-center justify-center ${
+                className={`text-center w-1/3 h-[32px] flex items-center justify-center ${
                   activeTab === "details"
                     ? "text-xl text-gray-800 dark:text-white font-bold"
                     : "text-gray-500 dark:text-gray-400 font-medium"
@@ -86,7 +106,7 @@ export default function Article({ className }: Props) {
               <span className="text-lg text-gray-800 dark:text-white">|</span>
               <button
                 onClick={() => setActiveTab("summary")}
-                className={`text-center w-1/2 h-[32px] flex items-center justify-center ${
+                className={`text-center w-1/3 h-[32px] flex items-center justify-center ${
                   activeTab === "summary"
                     ? "text-xl text-gray-800 dark:text-white font-bold"
                     : "text-gray-500 dark:text-gray-400 font-medium"
@@ -94,20 +114,27 @@ export default function Article({ className }: Props) {
               >
                 Summary
               </button>
+              <span className="text-lg text-gray-800 dark:text-white">|</span>
+              <button
+                onClick={() => setActiveTab("Q&A")}
+                className={`text-center w-1/3 h-[32px] flex items-center justify-center ${
+                  activeTab === "Q&A"
+                    ? "text-xl text-gray-800 dark:text-white font-bold"
+                    : "text-gray-500 dark:text-gray-400 font-medium"
+                }`}
+              >
+                Q&A
+              </button>
             </div>
-            <p className="text-end text-sm text-gray-500 dark:text-gray-300 px-4">
+            <p className="hidden sm:block text-end text-sm text-gray-500 dark:text-gray-300 px-4">
               {new Date(articleData.created_at).toLocaleDateString("en-GB")}
             </p>
           </div>
           {/* Content */}
-          <div className="bg-gray-100 dark:bg-slate-700 p-4 rounded-2xl w-full sm:h-[1200px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-[#3e3e3e] dark:scrollbar-track-[#232323] shadow-md">
-            {activeTab === "details" ? (
-              <Details
-                htmlContent={articleData.html}
-              />
-            ) : (
-              <Summary summary={articleData.content} />
-            )}
+          <div className="bg-gray-100 dark:bg-slate-700 p-4 rounded-2xl w-full md:w-[470px] lg:w-[600px] xl:w-full sm:h-[1200px] overflow-y-auto overflow-x-scroll scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-[#3e3e3e] dark:scrollbar-track-[#232323] shadow-md">
+            {activeTab === "details" && <Details htmlContent={articleData.html}/>}
+            {activeTab === "summary" &&<Summary summary={summary || 'Loading summary...'} />}
+            <Chatbot articleId={articleId || ""} className={`${activeTab !== "Q&A" && "hidden"}`} />
           </div>
         </div>
       </section>
