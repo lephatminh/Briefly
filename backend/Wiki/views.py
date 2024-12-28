@@ -1,13 +1,9 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Count
+from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework import status
-from elasticsearch import Elasticsearch
-from elasticsearch_dsl import Search
-from sumy.parsers.plaintext import PlaintextParser
-from sumy.nlp.tokenizers import Tokenizer
-from sumy.summarizers.lex_rank import LexRankSummarizer
 from .models import WikiArticle
 import random
 import time
@@ -20,7 +16,6 @@ from sentence_transformers import SentenceTransformer, util
 
 logger = logging.getLogger(__name__)
 nltk.download('punkt_tab')
-API_KEY = "AIzaSyAISyP5zG-7NIV5F6xesUveTRDmtQ_6eyU"
 model = SentenceTransformer('sentence-transformers/multi-qa-MiniLM-L6-cos-v1')
         
 def setup_gemini(api_key):
@@ -146,7 +141,7 @@ class ArticleSummaryView(APIView):
             index = content.find("See also")
             if index != -1:
                 content = content[:index]
-            summarized_content = WikiArticleDetailView.summarize_text(content, API_KEY)      
+            summarized_content = WikiArticleDetailView.summarize_text(content, settings.GEMINI_API_KEY)      
         except ValueError as ve:
             logger.error(f"Validation error: {str(ve)}")
             summarized_content = "Could not generate summary: invalid content"
