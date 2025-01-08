@@ -52,7 +52,7 @@ const Chatbot = ({ articleId, className }: {articleId: string, className?: strin
           <MessageBubble key={index} content={msg.content} sender={msg.sender} />
         ))}
         {loading && (
-          <div className="flex justify-start mb-2">
+          <div className="flex justify-start mb-2 p-3">
             <div className="p-2 rounded-lg bg-gray-300 text-black max-w-xs break-words">
               <div className="flex items-center space-x-2">
                 <div className="w-2.5 h-2.5 bg-gray-500 rounded-full animate-bounce"></div>
