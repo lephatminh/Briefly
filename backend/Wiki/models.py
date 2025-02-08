@@ -6,6 +6,7 @@ class WikiArticle(models.Model):
     content = models.TextField()
     images = models.JSONField(default=list)
     html = models.TextField()
+    popularity = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

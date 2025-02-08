@@ -1,132 +1,39 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Count
+from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework import status
-from elasticsearch import Elasticsearch
-from elasticsearch_dsl import Search
-from sumy.parsers.plaintext import PlaintextParser
-from sumy.nlp.tokenizers import Tokenizer
-from sumy.summarizers.lex_rank import LexRankSummarizer
-from .serializers import SuggestionSerializer
 from .models import WikiArticle
+from .utils import *
 import random
 import time
 import logging
 import nltk
+import re
 
 logger = logging.getLogger(__name__)
 nltk.download('punkt_tab')
-client = Elasticsearch("localhost:9200")
-
-MAX_SUGGESTIONS = 10
-
-def search_suggestions(request):
-    prefix = request.GET.get('q', None)
-    
-    if prefix:
-        s = Search(using=client, index='wiki_articles')
-
-        # Add suggester for title
-        s = s.suggest(
-            'title_suggestion',
-            prefix,
-            completion={'field': 'title.suggest'}
-        )
+gemini = setup_gemini(settings.GEMINI_API_KEY)
         
-        # Add suggester for content
-        s = s.query('match', content={'query': prefix, 'fuzziness': 'AUTO'})
-
-        response = s.execute()
-
-        suggestions = []
-        seen = set()
-
-        if 'title_suggestion' in response.suggest:
-            for option in response.suggest['title_suggestion'][0].options:
-                image = {'url': "/blank-img.svg", 'alt': 'image not found'} if not option._source.images \
-                    else {'url': option._source.images[0]['url'],'alt': option._source.images[0]['alt']}
-                if len(seen) <= MAX_SUGGESTIONS:
-                    suggestion_data = {
-                        'text': option.text,
-                        'score': option._score,
-                        'post': {    
-                            'id': option._source.id,
-                            'title': option._source.title,
-                            'image': image,
-                        }
-                    }
-                    serializer = SuggestionSerializer(data=suggestion_data)
-                    if serializer.is_valid():
-                        suggestions.append(serializer.validated_data)
-                    seen.add(option._source.title)
-
-        if len(seen) < MAX_SUGGESTIONS and response.hits:
-            for hit in response.hits:
-                option = hit.to_dict()
-                image = option['images'][0] if option['images'] else {'url': "/blank-img.svg", 'alt': 'image not found'}
-                if len(seen) < MAX_SUGGESTIONS and option['title'] not in seen:
-                    suggestion_data = {
-                        'text': hit.content,
-                        'score': hit.meta.score,
-                        'post': {  
-                            'id': option['id'],
-                            'title': option['title'],
-                            'image': image,
-                        }
-                    }
-                    serializer = SuggestionSerializer(data=suggestion_data)
-                    if serializer.is_valid():
-                        suggestions.append(suggestion_data)
-                    seen.add(option['title'])
-
-        return JsonResponse({'suggestions': suggestions}, status=status.HTTP_200_OK)
-
-    return JsonResponse({'error': 'No prefix provided'}, status=status.HTTP_400_BAD_REQUEST)
-
-class WikiArticleDetailView(APIView):
+class WikiArticleDetailView(APIView):        
     def get(self, request, *args, **kwargs):
         start_time = time.time()
         article_id = request.GET.get('id', None)
         
         if article_id:
             article = get_object_or_404(WikiArticle, id=article_id)
+            article.popularity += 1
+            article.save(update_fields=['popularity'])
         else:
             count = WikiArticle.objects.aggregate(count=Count('id'))['count']
             if count == 0:
                 return JsonResponse({'error': 'No article available'}, status=status.HTTP_404_NOT_FOUND)
             random_index = random.randint(0, count - 1)
             article = WikiArticle.objects.all()[random_index]
-            
-        # Summarize the article content using Sumy
-        try:
-            # Validate content
-            if not article.content or len(article.content.strip()) == 0:
-                raise ValueError("Empty content")
-
-            # Initialize Sumy components
-            content = article.content.replace("\\", "")
-            index = content.find("See also")
-            if index != -1:
-                content = content[:index]
-            parser = PlaintextParser.from_string(content, Tokenizer("english"))
-            summarizer = LexRankSummarizer()
-            
-            # Set number of sentences (e.g., 3 sentences)
-            summary_sentences = summarizer(parser.document, sentences_count=12)
-            
-            if not summary_sentences:
-                raise ValueError("No summary generated")
-            
-            # Combine summarized sentences
-            summarized_content = ' '.join(str(sentence) for sentence in summary_sentences)
-            
-        except ValueError as ve:
-            logger.error(f"Validation error: {str(ve)}")
-            summarized_content = "Could not generate summary: invalid content"
-        except Exception as e:
-            logger.error(f"Summarization error: {str(e)}")
-            summarized_content = "Error generating summary"
+            while article.html.startswith('<ol>\n<li>'):
+                random_index = random.randint(0, count - 1)
+                article = WikiArticle.objects.all()[random_index]
             
         end_time = time.time()
         response_time = end_time - start_time
@@ -134,10 +41,79 @@ class WikiArticleDetailView(APIView):
         return JsonResponse({
             'id': article.id,
             'title': article.title,
-            'content': summarized_content,
+            'teaser': ' '.join(re.split(r'(?<=[.!?])\s+', article.content.strip())[:10]),
             'images': article.images,
             'html': article.html,
             'created_at': article.created_at,
             'updated_at': article.updated_at,
             'response_time': response_time
         }, status=status.HTTP_200_OK)
+        
+        
+class QAChatbotView(APIView):
+    def answer_question(self, topic, question):
+        try:
+            prompt = f"Answer this question on the topic of {topic} in at most 10 sentences: {question}"
+            response = gemini.generate_content(prompt)
+            return response.text
+        except Exception as e:
+            return f"Error during summarization: {str(e)}"
+
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get('q', None)
+        article_id = request.GET.get('id', None)
+        if article_id:
+            article = get_object_or_404(WikiArticle, id=article_id)
+        else:
+            return JsonResponse({'error': 'Article not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        if query:
+            response = self.answer_question(article.title, query)
+            return JsonResponse({'response': response}, status=status.HTTP_200_OK)
+        else:
+            return JsonResponse({'error': 'No query provided or mismatched article ID'}, status=status.HTTP_400_BAD_REQUEST)
+
+        
+class ArticleSummaryView(APIView):
+    def summarize_text(self, text, api_key):
+        try:
+            # Split long text into chunks
+            chunks = chunk_text(text)
+            summaries = []
+
+            for chunk in chunks:
+                prompt = f"Please only give a summary paragraph of maximum 15 sentences of this long content: {chunk}. Please try to capture as much necessary information as possible."
+                response = gemini.generate_content(prompt)
+                summaries.append(response.text)
+            
+            print(summaries[0])
+            return summaries[0]
+
+        except Exception as e:
+            return f"Error during summarization: {str(e)}"
+        
+    def get(self, request, *args, **kwargs):
+        article_id = request.GET.get('id', None)
+        
+        if article_id is None:
+            return JsonResponse({'error': 'Article not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        
+        article = get_object_or_404(WikiArticle, id=article_id)
+        try:
+            if not article.content or len(article.content.strip()) == 0:
+                raise ValueError("Empty content")
+
+            content = article.content.replace("\\", "")
+            index = content.find("See also")
+            if index != -1:
+                content = content[:index]
+            summarized_content = self.summarize_text(content, settings.GEMINI_API_KEY)      
+        except ValueError as ve:
+            logger.error(f"Validation error: {str(ve)}")
+            summarized_content = "Could not generate summary: invalid content"
+        except Exception as e:
+            logger.error(f"Summarization error: {str(e)}")
+            summarized_content = "Error generating summary"
+    
+        return JsonResponse({'summary': summarized_content}, status=status.HTTP_200_OK)

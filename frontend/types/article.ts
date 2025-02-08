@@ -16,7 +16,7 @@ export type ArticleImage = {
 export type ArticleData = {
     id: number,
     title: string;
-    content: string;
+    teaser: string;
     images: ArticleImage[];
     html: string;
     created_at: string;
