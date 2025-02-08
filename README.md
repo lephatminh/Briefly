@@ -1,47 +1,37 @@
-# **Briefly - Setup Guide**
+# Briefly
 
-This is a guide to setup Briefly Development environment.
+**Briefly** is an AI-powered assistant for Wikipedia articles, designed to help users quickly find, summarize, and understand topics in **Mathematics, Physics, and Computer Science**. It functions as a **search engine** that retrieves Wikipedia articles, displays full content, provides AI-generated summaries, and enables a **Q&A chatbot** for further exploration.
 
-## Installation
+## About the Project
+This project is developed as part of the **Introduction to Information Retrieval** course term project (VNUHCM, APCS22).
 
-0. Clone the repository
-```bash
-$ git clone https://github.com/Shibainu13/Briefly.git
-```
+🔗 **Live Demo**: [Briefly](https://briefly-plum.vercel.app/)
 
-1. Run Docker, then enter the following commands into terminal. This step is only required for the first time setting up. For the next entries, we only need to run the server from Docker GUI:
-```bash
-$ docker network create elastic
-$ docker pull docker.elastic.co/elasticsearch/elasticsearch:8.16.1
-$ docker run -d --name elasticsearch \
-  --net elastic \
-  -p 9200:9200 -p 9300:9300 \
-  -e "discovery.type=single-node" \
-  -e "xpack.security.enabled=false" \
-  docker.elastic.co/elasticsearch/elasticsearch:8.16.1
-```
-Alternatively, **Elasticsearch** offers a variety of installing methods, you can go for any of these as long as the endpoints for Elasticsearch is at **http://localhost:9200**.
+🔗 **Video Demo**: [Video](https://drive.google.com/file/d/1Fd1HgaJIBDOVgsR7gwxGVwxq25NvuWSa/view?usp=drive_link)
 
-2. Install the necessary dependencies (make sure your python is version 3.13.0 or below)
-```bash
-$ python3 -m venv venv
-$ pip install -r requirements.txt
-```
+## Features
 
-3. Setup backend
-```bash
-$ cd backend
-$ python manage.py makemigrations
-$ python manage.py migrate
-$ python manage.py search_index --rebuild
-$ python manage.py runserver
-```
+- **Search Wikipedia**: Find articles on Math, Physics, and Computer Science.
+- **Full Article View**: Display the entire Wikipedia article with formatting.
+- **Summarization**: AI-generated concise summaries of articles.
+- **Q&A Chatbot**: Ask questions about the article with an AI assistant.
+- **Fast Search Indexing**: Powered by Elasticsearch for efficient search results.
 
-4. Setup frontend:
-  Open another terminal and input the following:
-```bash
-$ cd frontend
-$ npm install
-$ npm run dev
-```
+## Tech Stack
 
+### Frontend
+- **Next.js** (React-based framework)
+- Deployed on **Vercel**
+
+### Backend
+- **Django** (Django REST Framework for API)
+- Deployed on **Render.com** *(Free tier—may take up to 1 minute to load)*
+
+### Database & Search
+- **PostgreSQL** (Hosted on **Supabase**)
+- **Elasticsearch** (Hosted on **Bonsai.io**)
+
+### AI Services
+- **Gemini API** for article summarization and Q&A chatbot
+
+---
