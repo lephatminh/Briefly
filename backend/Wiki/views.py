@@ -4,6 +4,7 @@ from django.db.models import Count
 from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework import status
+from .llamaindex_utils import setup_llamaindex, query_index
 from .models import WikiArticle
 from .utils import *
 import random
@@ -15,6 +16,13 @@ import re
 logger = logging.getLogger(__name__)
 nltk.download('punkt_tab')
 gemini = setup_gemini(settings.GEMINI_API_KEY)
+
+# Setup LlamaIndex when module is loaded
+try:
+    llama_index = setup_llamaindex()
+except Exception as e:
+    logger.error(f"Error setting up LlamaIndex: {e}")
+    llama_index = None
         
 class WikiArticleDetailView(APIView):        
     def get(self, request, *args, **kwargs):
@@ -51,24 +59,34 @@ class WikiArticleDetailView(APIView):
         
         
 class QAChatbotView(APIView):
-    def answer_question(self, topic, question):
+    def answer_question(self, topic, question, article_content=None):
         try:
+            # First try using LlamaIndex if available
+            if llama_index:
+                try:
+                    return query_index(llama_index, question, article_content)
+                except Exception as e:
+                    logger.error(f"LlamaIndex query error: {e}")
+                    # Fall back to direct Gemini if LlamaIndex fails
+            
+            # Setup Gemini fallback if there's failure
             prompt = f"Answer this question on the topic of {topic} in at most 10 sentences: {question}"
             response = gemini.generate_content(prompt)
             return response.text
         except Exception as e:
-            return f"Error during summarization: {str(e)}"
+            return f"Error answering question: {str(e)}"
 
     def get(self, request, *args, **kwargs):
         query = request.GET.get('q', None)
         article_id = request.GET.get('id', None)
         if article_id:
             article = get_object_or_404(WikiArticle, id=article_id)
+            article_content = article.content
         else:
             return JsonResponse({'error': 'Article not found.'}, status=status.HTTP_404_NOT_FOUND)
 
         if query:
-            response = self.answer_question(article.title, query)
+            response = self.answer_question(article.title, query, article_content)
             return JsonResponse({'response': response}, status=status.HTTP_200_OK)
         else:
             return JsonResponse({'error': 'No query provided or mismatched article ID'}, status=status.HTTP_400_BAD_REQUEST)

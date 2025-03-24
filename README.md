@@ -32,6 +32,7 @@ This project is developed as part of the **Introduction to Information Retrieval
 - **Elasticsearch** (Hosted on **Bonsai.io**)
 
 ### AI Services
-- **Gemini API** for article summarization and Q&A chatbot
+- **Gemini API** for article summarization
+- **LlamaIndex**, integrated with Elasticsearch, for question-answering
 
 ---
