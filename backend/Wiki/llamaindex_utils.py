@@ -1,6 +1,7 @@
 import os
 import logging
-from llama_index.core import VectorStoreIndex, ServiceContext
+from llama_index.core import VectorStoreIndex
+from llama_index.core.settings import Settings
 from llama_index.vector_stores.elasticsearch import ElasticsearchStore
 from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
 from llama_index.llms.google_genai import GoogleGenAI
@@ -22,6 +23,7 @@ def setup_llamaindex():
         )
         
         # Updated embedding model instantiation using new GoogleGenAIEmbedding
+        print(f"GEMINI_API_KEY: {settings.GEMINI_API_KEY}")  # Add this line
         embed_model = GoogleGenAIEmbedding(
             api_key=settings.GEMINI_API_KEY,
             model_name="models/embedding-001"
@@ -30,20 +32,15 @@ def setup_llamaindex():
         # Set up LLM using new GoogleGenAI
         llm = GoogleGenAI(
             api_key=settings.GEMINI_API_KEY,
-            model="gemini-pro"
+            model="gemini-1.5-pro"
         )
         
-        # Create service context
-        service_context = ServiceContext.from_defaults(
-            llm=llm,
-            embed_model=embed_model
-        )
+        # Use Settings instead of ServiceContext
+        Settings.llm = llm
+        Settings.embed_model = embed_model
         
         # Create index from vector store
-        index = VectorStoreIndex.from_vector_store(
-            vector_store=vector_store,
-            service_context=service_context
-        )
+        index = VectorStoreIndex.from_vector_store(vector_store=vector_store)
         
         return index
     except Exception as e:
