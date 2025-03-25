@@ -2,8 +2,8 @@ import os
 import logging
 from llama_index.core import VectorStoreIndex, ServiceContext
 from llama_index.vector_stores.elasticsearch import ElasticsearchStore
-from llama_index.embeddings.gemini import GeminiEmbedding
-from llama_index.llms.gemini import Gemini
+from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
+from llama_index.llms.google_genai import GoogleGenAI
 from elasticsearch import Elasticsearch
 from django.conf import settings
 
@@ -15,21 +15,20 @@ def setup_llamaindex():
         # Initialize Elasticsearch connection
         es_client = Elasticsearch(settings.ELASTICSEARCH_DSL['default']['hosts'])
         
-        # Set up vector store
         vector_store = ElasticsearchStore(
             es_client=es_client,
             index_name="wiki_articles",
             embedding_dimension=768  # Dimension depends on your embedding model
         )
         
-        # Updated embedding model instantiation
-        embed_model = GeminiEmbedding(
+        # Updated embedding model instantiation using new GoogleGenAIEmbedding
+        embed_model = GoogleGenAIEmbedding(
             api_key=settings.GEMINI_API_KEY,
             model_name="models/embedding-001"
         )
         
-        # Set up LLM
-        llm = Gemini(
+        # Set up LLM using new GoogleGenAI
+        llm = GoogleGenAI(
             api_key=settings.GEMINI_API_KEY,
             model="gemini-pro"
         )
@@ -48,7 +47,7 @@ def setup_llamaindex():
         
         return index
     except Exception as e:
-        logger.error(f"Error setting up LlamaIndex: {e}")
+        logger.error(f"Error setting up LlamaIndex: {e}", exc_info=True)
         return None
 
 def query_index(index, query_str, article_content=None):
